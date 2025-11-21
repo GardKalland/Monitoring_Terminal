@@ -58,6 +58,9 @@ pub struct App {
     pub user_location: String,
     pub selected_category: usize,
     pub category_expanded: bool,
+    pub command_mode: bool,
+    pub command_buffer: String,
+    pub show_all_processes: bool,
 }
 
 impl Default for App {
@@ -77,6 +80,9 @@ impl Default for App {
             user_location,
             selected_category: 0,
             category_expanded: false,
+            command_mode: false,
+            command_buffer: String::new(),
+            show_all_processes: false,
         }
     }
 }
@@ -189,5 +195,45 @@ impl App {
             self.selected_category += 2;
         }
         self.process_scroll = 0;
+    }
+
+    pub fn enter_command_mode(&mut self) {
+        self.command_mode = true;
+        self.command_buffer.clear();
+        self.command_buffer.push('/');
+    }
+
+    pub fn exit_command_mode(&mut self) {
+        self.command_mode = false;
+        self.command_buffer.clear();
+        self.show_all_processes = false;
+    }
+
+    pub fn command_input_char(&mut self, c: char) {
+        self.command_buffer.push(c);
+    }
+
+    pub fn command_backspace(&mut self) {
+        if self.command_buffer.len() > 1 {
+            self.command_buffer.pop();
+        }
+    }
+
+    pub fn execute_command(&mut self) {
+        let cmd = self.command_buffer.trim().to_lowercase();
+
+        match cmd.as_str() {
+            "/all" => {
+                self.show_all_processes = true;
+                self.command_mode = false;
+                self.process_scroll = 0;
+            }
+            _ => {
+                // Unknown command, just exit command mode
+                self.command_mode = false;
+            }
+        }
+
+        self.command_buffer.clear();
     }
 }

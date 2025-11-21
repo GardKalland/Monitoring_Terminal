@@ -12,6 +12,25 @@ pub fn handle_key_event(key: KeyEvent, app: &mut crate::app::App) {
         return;
     }
 
+    if app.command_mode {
+        match key.code {
+            KeyCode::Esc => {
+                app.exit_command_mode();
+            }
+            KeyCode::Enter => {
+                app.execute_command();
+            }
+            KeyCode::Backspace => {
+                app.command_backspace();
+            }
+            KeyCode::Char(c) => {
+                app.command_input_char(c);
+            }
+            _ => {}
+        }
+        return;
+    }
+
     match key.code {
         KeyCode::Char('q') | KeyCode::Char('Q') => {
             app.quit();
@@ -51,14 +70,23 @@ pub fn handle_key_event(key: KeyEvent, app: &mut crate::app::App) {
                 app.toggle_category_expanded();
             }
         }
+        KeyCode::Char('/') => {
+            if app.current_tab == crate::app::Tab::Processes {
+                app.enter_command_mode();
+            }
+        }
         KeyCode::Esc => {
-            if app.current_tab == crate::app::Tab::Processes && app.category_expanded {
-                app.collapse_category();
+            if app.current_tab == crate::app::Tab::Processes {
+                if app.show_all_processes {
+                    app.exit_command_mode();
+                } else if app.category_expanded {
+                    app.collapse_category();
+                }
             }
         }
         KeyCode::Char('h') | KeyCode::Left => {
             if app.current_tab == crate::app::Tab::Processes {
-                if !app.category_expanded {
+                if !app.category_expanded && !app.show_all_processes {
                     app.move_category_left();
                 }
             } else {
@@ -67,7 +95,7 @@ pub fn handle_key_event(key: KeyEvent, app: &mut crate::app::App) {
         }
         KeyCode::Char('l') | KeyCode::Right => {
             if app.current_tab == crate::app::Tab::Processes {
-                if !app.category_expanded {
+                if !app.category_expanded && !app.show_all_processes {
                     app.move_category_right();
                 }
             } else {
@@ -76,7 +104,7 @@ pub fn handle_key_event(key: KeyEvent, app: &mut crate::app::App) {
         }
         KeyCode::Char('k') | KeyCode::Up => {
             if app.current_tab == crate::app::Tab::Processes {
-                if app.category_expanded {
+                if app.category_expanded || app.show_all_processes {
                     app.scroll_up();
                 } else {
                     app.move_category_up();
@@ -87,7 +115,7 @@ pub fn handle_key_event(key: KeyEvent, app: &mut crate::app::App) {
         }
         KeyCode::Char('j') | KeyCode::Down => {
             if app.current_tab == crate::app::Tab::Processes {
-                if app.category_expanded {
+                if app.category_expanded || app.show_all_processes {
                     app.scroll_down();
                 } else {
                     app.move_category_down();
