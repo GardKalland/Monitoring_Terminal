@@ -57,10 +57,6 @@ impl SystemInfo {
         );
     }
 
-    // this bad boi right here does the refreshing all the time
-    pub fn refresh(&mut self) {
-        self.refresh_full();
-    }
 
     pub fn get_cpu_usage(&self) -> f32 {
         self.system.global_cpu_usage()
@@ -134,7 +130,6 @@ impl SystemInfo {
                     name,
                     cpu_usage: process.cpu_usage(),
                     memory: process.memory(),
-                    status: format!("{:?}", process.status()),
                     category,
                 }
             })
@@ -145,7 +140,6 @@ impl SystemInfo {
         self.disks
             .iter()
             .map(|disk| DiskInfo {
-                name: disk.name().to_string_lossy().to_string(),
                 mount_point: disk.mount_point().to_string_lossy().to_string(),
                 total_space: disk.total_space(),
                 available_space: disk.available_space(),
@@ -153,12 +147,6 @@ impl SystemInfo {
             .collect()
     }
 
-    pub fn get_network_info(&self) -> Vec<(String, u64, u64)> {
-        self.networks
-            .iter()
-            .map(|(name, network)| (name.to_string(), network.received(), network.transmitted()))
-            .collect()
-    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -316,13 +304,11 @@ pub struct ProcessInfo {
     pub name: String,
     pub cpu_usage: f32,
     pub memory: u64,
-    pub status: String,
     pub category: ProcessCategory,
 }
 
 #[derive(Debug, Clone)]
 pub struct DiskInfo {
-    pub name: String,
     pub mount_point: String,
     pub total_space: u64,
     pub available_space: u64,

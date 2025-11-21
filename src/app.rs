@@ -27,14 +27,6 @@ impl Tab {
         }
     }
 
-    pub fn title(&self) -> &str {
-        match self {
-            Tab::Overview => "Overview",
-            Tab::Processes => "Processes",
-            Tab::SystemInfo => "System Info",
-            Tab::Vpn => "VPN",
-        }
-    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -55,7 +47,6 @@ pub struct App {
     pub cpu_history: VecDeque<f32>,
     pub memory_history: VecDeque<f64>,
     pub history_size: usize,
-    pub user_location: String,
     pub selected_category: usize,
     pub category_expanded: bool,
     pub command_mode: bool,
@@ -65,8 +56,6 @@ pub struct App {
 
 impl Default for App {
     fn default() -> Self {
-        let user_location = detect_user_location();
-
         Self {
             should_quit: false,
             show_help: false,
@@ -77,7 +66,6 @@ impl Default for App {
             cpu_history: VecDeque::with_capacity(100),
             memory_history: VecDeque::with_capacity(100),
             history_size: 100,
-            user_location,
             selected_category: 0,
             category_expanded: false,
             command_mode: false,
@@ -85,18 +73,6 @@ impl Default for App {
             show_all_processes: false,
         }
     }
-}
-
-fn detect_user_location() -> String {
-    if let Ok(config) = std::fs::read_to_string(".user_location") {
-        let location = config.trim().to_string();
-        if !location.is_empty() {
-            return location;
-        }
-    }
-
-    // Defaulting to ??? if it dont find ya
-    "???".to_string()
 }
 
 impl App {

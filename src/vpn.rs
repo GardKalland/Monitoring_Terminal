@@ -2,19 +2,11 @@ use std::process::Command;
 
 // Made Claude add many providers, which i dont use. So i dont know if they work.
 #[derive(Debug, Clone, PartialEq)]
-pub enum VpnAction {
-    None,
-    //   Connecting,
-    // Disconnecting,
-}
-
-#[derive(Debug, Clone, PartialEq)]
 pub enum VpnProvider {
     Unknown,
     ProtonVPN,
     NordVPN,
     Mullvad,
-    ExpressVPN,
     Generic, // Detected via interface but unknown provider
 }
 
@@ -25,7 +17,6 @@ impl VpnProvider {
             VpnProvider::ProtonVPN => "ProtonVPN",
             VpnProvider::NordVPN => "NordVPN",
             VpnProvider::Mullvad => "Mullvad",
-            VpnProvider::ExpressVPN => "ExpressVPN",
             VpnProvider::Generic => "VPN",
         }
     }
@@ -43,8 +34,6 @@ pub struct VpnStatus {
     pub interface: Option<String>,
     pub connection_time: Option<String>,
     pub raw_output: String,
-    pub action: VpnAction,
-    pub action_message: Option<String>,
 }
 
 /// Most of thise things just didnt work because i couldnt use an vpn service thingy mcjigg, or
@@ -64,19 +53,7 @@ impl VpnStatus {
             interface: None,
             connection_time: None,
             raw_output: String::new(),
-            action: VpnAction::None,
-            action_message: None,
         }
-    }
-
-    pub fn set_action(&mut self, action: VpnAction, message: Option<String>) {
-        self.action = action;
-        self.action_message = message;
-    }
-
-    pub fn clear_action(&mut self) {
-        self.action = VpnAction::None;
-        self.action_message = None;
     }
 
     pub fn check_protonvpn_cli() -> Self {
