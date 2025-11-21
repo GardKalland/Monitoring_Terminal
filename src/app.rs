@@ -56,6 +56,8 @@ pub struct App {
     pub memory_history: VecDeque<f64>,
     pub history_size: usize,
     pub user_location: String,
+    pub selected_category: usize,
+    pub category_expanded: bool,
 }
 
 impl Default for App {
@@ -73,6 +75,8 @@ impl Default for App {
             memory_history: VecDeque::with_capacity(100),
             history_size: 100,
             user_location,
+            selected_category: 0,
+            category_expanded: false,
         }
     }
 }
@@ -105,10 +109,22 @@ impl App {
     pub fn next_tab(&mut self) {
         self.current_tab = self.current_tab.next();
         self.process_scroll = 0;
+        self.category_expanded = false;
     }
 
     pub fn previous_tab(&mut self) {
         self.current_tab = self.current_tab.previous();
+        self.process_scroll = 0;
+        self.category_expanded = false;
+    }
+
+    pub fn toggle_category_expanded(&mut self) {
+        self.category_expanded = !self.category_expanded;
+        self.process_scroll = 0;
+    }
+
+    pub fn collapse_category(&mut self) {
+        self.category_expanded = false;
         self.process_scroll = 0;
     }
 
@@ -145,5 +161,33 @@ impl App {
             self.memory_history.pop_front();
         }
         self.memory_history.push_back(value);
+    }
+
+    pub fn move_category_left(&mut self) {
+        if self.selected_category % 2 == 1 {
+            self.selected_category -= 1;
+        }
+        self.process_scroll = 0;
+    }
+
+    pub fn move_category_right(&mut self) {
+        if self.selected_category % 2 == 0 {
+            self.selected_category += 1;
+        }
+        self.process_scroll = 0;
+    }
+
+    pub fn move_category_up(&mut self) {
+        if self.selected_category >= 2 {
+            self.selected_category -= 2;
+        }
+        self.process_scroll = 0;
+    }
+
+    pub fn move_category_down(&mut self) {
+        if self.selected_category < 6 {
+            self.selected_category += 2;
+        }
+        self.process_scroll = 0;
     }
 }

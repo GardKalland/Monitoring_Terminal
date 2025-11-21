@@ -22,10 +22,10 @@ pub fn handle_key_event(key: KeyEvent, app: &mut crate::app::App) {
         KeyCode::Char('?') => {
             app.toggle_help();
         }
-        KeyCode::Char('l') | KeyCode::Right => {
+        KeyCode::Tab => {
             app.next_tab();
         }
-        KeyCode::Char('h') | KeyCode::Left => {
+        KeyCode::BackTab => {
             app.previous_tab();
         }
         KeyCode::Char('1') => {
@@ -46,11 +46,55 @@ pub fn handle_key_event(key: KeyEvent, app: &mut crate::app::App) {
         KeyCode::Char('o') => {
             app.toggle_sort_order();
         }
-        KeyCode::Up | KeyCode::Char('k') => {
-            app.scroll_up();
+        KeyCode::Enter => {
+            if app.current_tab == crate::app::Tab::Processes {
+                app.toggle_category_expanded();
+            }
         }
-        KeyCode::Down | KeyCode::Char('j') => {
-            app.scroll_down();
+        KeyCode::Esc => {
+            if app.current_tab == crate::app::Tab::Processes && app.category_expanded {
+                app.collapse_category();
+            }
+        }
+        KeyCode::Char('h') | KeyCode::Left => {
+            if app.current_tab == crate::app::Tab::Processes {
+                if !app.category_expanded {
+                    app.move_category_left();
+                }
+            } else {
+                app.previous_tab();
+            }
+        }
+        KeyCode::Char('l') | KeyCode::Right => {
+            if app.current_tab == crate::app::Tab::Processes {
+                if !app.category_expanded {
+                    app.move_category_right();
+                }
+            } else {
+                app.next_tab();
+            }
+        }
+        KeyCode::Char('k') | KeyCode::Up => {
+            if app.current_tab == crate::app::Tab::Processes {
+                if app.category_expanded {
+                    app.scroll_up();
+                } else {
+                    app.move_category_up();
+                }
+            } else {
+                app.scroll_up();
+            }
+        }
+        KeyCode::Char('j') | KeyCode::Down => {
+            if app.current_tab == crate::app::Tab::Processes {
+                if app.category_expanded {
+                    app.scroll_down();
+                } else {
+                    app.move_category_down();
+                }
+            } else {
+                app.scroll_down();
+            }
         }
         _ => {}
     }

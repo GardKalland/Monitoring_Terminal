@@ -341,9 +341,9 @@ impl VpnStatus {
         status
     }
 
-    
+
 //     // Function to get public IP address, maybe i will reanable it later.
-//     // but i had to curl it, so i couldnt be bothered. to have it enabled. 
+//     // but i had to curl it, so i couldnt be bothered. to have it enabled.
 //     pub fn get_public_ip() -> Option<String> {
 //         let output = Command::new("curl")
 //             .args(&["-s", "https://api.ipify.org"])
@@ -358,7 +358,7 @@ impl VpnStatus {
 //
 //         None
 //     }
-// }
+}
 
 pub fn get_vpn_status() -> VpnStatus {
     // 1. Check NordVPN
