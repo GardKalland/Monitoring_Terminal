@@ -15,7 +15,6 @@ use crate::{
 pub fn render_processes(frame: &mut Frame, app: &App, system_info: &SystemInfo, area: Rect) {
     let processes = system_info.get_processes();
 
-    // Show all processes if /all command was used
     if app.show_all_processes {
         render_all_processes(frame, app, system_info, area);
         if app.command_mode {
@@ -138,7 +137,6 @@ pub fn render_processes(frame: &mut Frame, app: &App, system_info: &SystemInfo, 
         }
     }
 
-    // Render command prompt if in command mode
     if app.command_mode {
         render_command_prompt(frame, app, area);
     }
@@ -424,7 +422,11 @@ fn render_all_processes(frame: &mut Frame, app: &App, system_info: &SystemInfo, 
     let list = List::new(items).block(
         Block::default()
             .borders(Borders::ALL)
-            .border_style(Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD))
+            .border_style(
+                Style::default()
+                    .fg(Color::Cyan)
+                    .add_modifier(Modifier::BOLD),
+            )
             .title(format!(
                 " All Processes - {} Total | Sort: {} {} | Press ESC to go back ",
                 processes.len(),
